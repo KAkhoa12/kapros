@@ -2,14 +2,14 @@ import { API_CONFIG } from '@/config/api';
 
 // Types
 export interface ApiResponse<T = unknown> {
- data?: T;
- error?: string;
- message?: string;
+  data?: T;
+  error?: string;
+  message?: string;
 }
 
 export interface ModelStatus {
- status: string;
- message?: string;
+  status: string;
+  message?: string;
 }
 
 export interface GenerateResponse {
@@ -22,46 +22,46 @@ export interface GenerateResponse {
 
 // Base API function
 async function apiCall<T>(
- endpoint: string,
- options: RequestInit = {}
+  endpoint: string,
+  options: RequestInit = {}
 ): Promise<ApiResponse<T>> {
- try {
- const url = `${API_CONFIG.API_PATH}${endpoint}`;
- const response = await fetch(url, {
- headers: {
- 'Content-Type': 'application/json',
- ...options.headers,
- },
- ...options,
- });
+  try {
+    const url = `${API_CONFIG.API_PATH}${endpoint}`;
+    const response = await fetch(url, {
+      headers: {
+        'Content-Type': 'application/json',
+        ...options.headers,
+      },
+      ...options,
+    });
 
- if (!response.ok) {
- throw new Error(`HTTP error! status: ${response.status}`);
- }
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
 
- const data = await response.json();
- return { data };
- } catch (error) {
- return { 
- error: error instanceof Error ? error.message : 'Unknown error occurred' 
- };
- }
+    const data = await response.json();
+    return { data };
+  } catch (error) {
+    return {
+      error: error instanceof Error ? error.message : 'Unknown error occurred'
+    };
+  }
 }
 
 // Models API
 export async function getModels(): Promise<ApiResponse> {
- return apiCall(API_CONFIG.ENDPOINTS.MODELS);
+  return apiCall(API_CONFIG.ENDPOINTS.MODELS);
 }
 
 // Face2Comic API
 export async function getFace2ComicStatus(): Promise<ApiResponse<ModelStatus>> {
- return apiCall(API_CONFIG.ENDPOINTS.FACE2COMIC.STATUS);
+  return apiCall(API_CONFIG.ENDPOINTS.FACE2COMIC.STATUS);
 }
 
 export async function setupFace2Comic(): Promise<ApiResponse> {
- return apiCall(API_CONFIG.ENDPOINTS.FACE2COMIC.SETUP, {
- method: 'POST',
- });
+  return apiCall(API_CONFIG.ENDPOINTS.FACE2COMIC.SETUP, {
+    method: 'POST',
+  });
 }
 
 export async function generateFace2Comic(imageBase64: string): Promise<ApiResponse<GenerateResponse>> {
@@ -86,21 +86,21 @@ export async function generateFace2Comic(imageBase64: string): Promise<ApiRespon
     const data = await apiResponse.json();
     return { data };
   } catch (error) {
-    return { 
-      error: error instanceof Error ? error.message : 'Unknown error occurred' 
+    return {
+      error: error instanceof Error ? error.message : 'Unknown error occurred'
     };
   }
 }
 
 // Comic2Face API
 export async function getComic2FaceStatus(): Promise<ApiResponse<ModelStatus>> {
- return apiCall(API_CONFIG.ENDPOINTS.COMIC2FACE.STATUS);
+  return apiCall(API_CONFIG.ENDPOINTS.COMIC2FACE.STATUS);
 }
 
 export async function setupComic2Face(): Promise<ApiResponse> {
- return apiCall(API_CONFIG.ENDPOINTS.COMIC2FACE.SETUP, {
- method: 'POST',
- });
+  return apiCall(API_CONFIG.ENDPOINTS.COMIC2FACE.SETUP, {
+    method: 'POST',
+  });
 }
 
 export async function generateComic2Face(file: File): Promise<ApiResponse<GenerateResponse>> {
@@ -120,8 +120,45 @@ export async function generateComic2Face(file: File): Promise<ApiResponse<Genera
     const data = await response.json();
     return { data };
   } catch (error) {
-    return { 
-      error: error instanceof Error ? error.message : 'Unknown error occurred' 
+    return {
+      error: error instanceof Error ? error.message : 'Unknown error occurred'
+    };
+  }
+}
+
+// Traffic Detect YOLO API
+export async function getTrafficDetectYOLOStatus(): Promise<ApiResponse<ModelStatus>> {
+  return apiCall(API_CONFIG.ENDPOINTS.TRAFFIC_DETECT_YOLO.STATUS);
+}
+
+export async function setupTrafficDetectYOLO(): Promise<ApiResponse> {
+  return apiCall(API_CONFIG.ENDPOINTS.TRAFFIC_DETECT_YOLO.SETUP, {
+    method: 'POST',
+  });
+}
+
+
+export async function detectTrafficDetectYOLO(file: File, target_classes?: string[]): Promise<ApiResponse<GenerateResponse>> {
+  const formData = new FormData();
+  formData.append('file', file);
+  if (target_classes) {
+    target_classes.forEach(cls => formData.append('target_classes', cls));
+  }
+  try {
+    const response = await fetch(`${API_CONFIG.API_PATH}${API_CONFIG.ENDPOINTS.TRAFFIC_DETECT_YOLO.DETECT}`, {
+      method: 'POST',
+      body: formData,
+    });
+
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+
+    const data = await response.json();
+    return { data };
+  } catch (error) {
+    return {
+      error: error instanceof Error ? error.message : 'Unknown error occurred'
     };
   }
 }

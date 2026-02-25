@@ -45,6 +45,12 @@ const models = [
     image: "",
     link: "/models/comic2face",
   },
+  {
+    name: "Traffic Detect YOLO",
+    description: "Detect vehicles traffic in Ho Chi Minh City",
+    image: "",
+    link: "/models/traffic-detect-yolo",
+  },
 ];
 
 const ModelsPage = () => {
