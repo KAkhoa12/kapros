@@ -1,5 +1,5 @@
 export const API_CONFIG = {
-  API_PATH: "http://localhost:8000",
+  API_PATH: "https://kaitdev-api-model-ai.hf.space",
   ENDPOINTS: {
     MODELS: "/models",
     FACE2COMIC: {
